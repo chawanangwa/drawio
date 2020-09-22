@@ -1255,22 +1255,23 @@ DriveClient.prototype.saveFile = function(file, revision, success, errFn, noChec
 			{
 				EditorUi.logError(e.message, null, null, e);
 				
-				EditorUi.sendReport('Critical error in DriveClient.saveFile ' +
-					new Date().toISOString() + ':' +
-					'\n\nUserAgent=' + navigator.userAgent +
-					'\nAppVersion=' + navigator.appVersion +
-					'\nAppName=' + navigator.appName +
-					'\nPlatform=' + navigator.platform +
-					'\nFile=' + file.desc.id + '.' + file.desc.headRevisionId +
-					'\nMime=' + file.desc.mimeType +
-					'\nUser=' + ((this.user != null) ? this.user.id : 'nouser') +
-					 	((file.sync != null) ? '-client_' + file.sync.clientId : '-nosync') +
-					'\nSaveLevel=' + file.saveLevel +
-					'\nSaveAsPng=' + (this.ui.useCanvasForExport && /(\.png)$/i.test(file.getTitle())) +
-					'\nRetryCount=' + retryCount +
-					'\nError=' + e +
-					'\nMessage=' + e.message +
-					'\n\nStack:\n' + e.stack);
+//				EditorUi.sendReport('Critical error in DriveClient.saveFile ' +
+//					new Date().toISOString() + ':' +
+//					'\n\nUserAgent=' + navigator.userAgent +
+//					'\nAppVersion=' + navigator.appVersion +
+//					'\nAppName=' + navigator.appName +
+//					'\nPlatform=' + navigator.platform +
+//					'\nFile=' + file.desc.id + '.' + file.desc.headRevisionId +
+//					'\nMime=' + file.desc.mimeType +
+//					'\nSize=' + file.getSize() +
+//					'\nUser=' + ((this.user != null) ? this.user.id : 'nouser') +
+//					 	((file.sync != null) ? '-client_' + file.sync.clientId : '-nosync') +
+//					'\nSaveLevel=' + file.saveLevel +
+//					'\nSaveAsPng=' + (this.ui.useCanvasForExport && /(\.png)$/i.test(file.getTitle())) +
+//					'\nRetryCount=' + retryCount +
+//					'\nError=' + e +
+//					'\nMessage=' + e.message +
+//					'\n\nStack:\n' + e.stack);
 			}
 			catch (e)
 			{
@@ -1523,14 +1524,14 @@ DriveClient.prototype.saveFile = function(file, revision, success, errFn, noChec
 									var acceptResponse = true;
 									var timeoutThread = null;
 									
-									// Allow for re-auth flow with 3x timeout
+									// Allow for re-auth flow with 5x timeout
 									try
 									{
 										timeoutThread = window.setTimeout(mxUtils.bind(this, function()
 										{
 											acceptResponse = false;
-											error({code: App.ERROR_TIMEOUT, message: mxResources.get('timeout')});
-										}), 3 * this.ui.timeout);
+											error({code: App.ERROR_TIMEOUT});
+										}), 5 * this.ui.timeout);
 									}
 									catch (e)
 									{
@@ -1656,7 +1657,7 @@ DriveClient.prototype.saveFile = function(file, revision, success, errFn, noChec
 							{
 								file.saveLevel = 9;
 								
-								if (realOverwrite)
+								if (realOverwrite || etag == null)
 								{
 									doExecuteSave(realOverwrite);
 								}
@@ -1671,7 +1672,7 @@ DriveClient.prototype.saveFile = function(file, revision, success, errFn, noChec
 										timeoutThread = window.setTimeout(mxUtils.bind(this, function()
 										{
 											acceptResponse = false;
-											error({code: App.ERROR_TIMEOUT, message: mxResources.get('timeout')});
+											error({code: App.ERROR_TIMEOUT});
 										}), 3 * this.ui.timeout);
 									}
 									catch (e)
@@ -1950,9 +1951,10 @@ DriveClient.prototype.createUploadRequest = function(id, metadata, data, revisio
 		'headers': headers,
 		'params': delim + 'Content-Type: application/json\r\n\r\n' + JSON.stringify(metadata) + delim +
 			'Content-Type: ' + ctype + '\r\n' + 'Content-Transfer-Encoding: base64\r\n' + '\r\n' +
-			((data != null) ? (binary) ? data : Base64.encode(data) : '') + close
+			((data != null) ? ((binary) ? data : ((window.btoa && !mxClient.IS_IE && !mxClient.IS_IE11) ?
+				Graph.base64EncodeUnicode(data) : Base64.encode(data))) : '') + close
 	}
-	
+
 	if (!revision)
 	{
 		reqObj.fullUrl += '&newRevision=false';

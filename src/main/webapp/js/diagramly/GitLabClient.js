@@ -26,6 +26,11 @@ GitLabClient.prototype.scope = 'api%20read_repository%20write_repository';
 GitLabClient.prototype.baseUrl = DRAWIO_GITLAB_URL + '/api/v4';
 
 /**
+ * Maximum file size of the GitHub REST API.
+ */
+GitLabClient.prototype.maxFileSize = 10000000 /*10MB*/;
+
+/**
  * Name for the auth token header.
  */
 GitLabClient.prototype.authToken = 'Bearer';
@@ -202,7 +207,15 @@ GitLabClient.prototype.executeRequest = function(req, success, error, ignoreNotF
 						mxResources.get('error') + ' ' + req.getStatus())});
 				}
 			}
-		}), error);
+		}), mxUtils.bind(this, function(err)
+		{
+			window.clearTimeout(timeoutThread);
+				    	
+			if (acceptResponse)
+			{
+				error(err);
+			}
+		}));
 	});
 
 	var fn = mxUtils.bind(this, function(failOnAuth)
@@ -562,7 +575,7 @@ GitLabClient.prototype.writeFile = function(org, repo, ref, path, message, data,
 	if (data.length >= this.maxFileSize)
 	{
 		error({message: mxResources.get('drawingTooLarge') + ' (' +
-			this.ui.formatFileSize(data.length) + ' / 1 MB)'});
+			this.ui.formatFileSize(data.length) + ' / 10 MB)'});
 	}
 	else
 	{
