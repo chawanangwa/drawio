@@ -1518,6 +1518,112 @@ App.prototype.init = function()
 
 	this.updateHeader();
 
+	this.viewEditor = document.createElement('div'); //this.appIcon.cloneNode(false);
+	this.viewEditor.id = "viewEditor";
+	this.viewEditor.style.position = 'relative';;
+	this.viewEditor.style.float = 'right';
+	this.viewEditor.style.height = "65px";
+	this.viewEditor.style.width = "556px";
+	this.viewEditor.style.marginLeft ="0px";
+	this.viewEditor.style.marginRight="32px";
+	this.viewEditor.style.marginTop ="0px";
+	this.viewEditor.style.marginBottom = "0px";
+	this.viewEditor.zIndex = "1000";
+	this.viewEditor.style.backgroundColor = "#F0F0F0";
+	this.viewEditor.style.borderColor = "#BEBEBE";
+	this.viewEditor.style.borderWidth = "1px";
+	this.viewEditor.style.borderStyle = "solid";
+	this.menubarContainer.appendChild(this.viewEditor);
+
+	this.showViews = document.createElement('button');
+	this.showViews.innerHTML = "Views";
+	this.showViews.style.height = "100%";
+	this.showViews.style.width = "60px";
+	this.viewEditor.appendChild(this.showViews);
+
+	this.analyseUncertainty = this.showViews.cloneNode(false);
+	this.visualUncertainty = this.showViews.cloneNode(false);
+	this.visualUncertainty.innerHTML = "Visualise";
+	this.analyseUncertainty.innerHTML = "Count uncertainties";
+
+	//Uncertainty add, select, delete and update buttons
+	this.addUncertainty = this.showViews.cloneNode(false);
+	this.addUncertainty.innerHTML = "Add";
+	this.addUncertainty.style.float = 'right';
+
+	this.deleteUncertainty = this.addUncertainty.cloneNode(false);
+	this.updateUncertainty = this.addUncertainty.cloneNode(false);
+	this.selectUncertainty = this.addUncertainty.cloneNode(false);
+
+	this.deleteUncertainty.innerHTML = "Delete";
+	this.updateUncertainty.innerHTML = "Update";
+	this.selectUncertainty.innerHTML = "Select";
+
+
+	this.viewEditor.appendChild(this.analyseUncertainty);
+	this.viewEditor.appendChild(this.visualUncertainty);
+
+	this.viewEditor.appendChild(this.addUncertainty);
+
+	this.viewEditor.appendChild(this.deleteUncertainty);
+	this.viewEditor.appendChild(this.selectUncertainty);
+	this.viewEditor.appendChild(this.updateUncertainty);
+	this.viewEditor.appendChild(this.addUncertainty);
+
+
+	
+
+	mxEvent.addListener(this.showViews, 'click', mxUtils.bind(this, function()
+	{
+		this.actions.get('layers').funct();
+	}));
+
+
+	mxEvent.addListener(this.addUncertainty, 'click', mxUtils.bind(this, function()
+	{
+		this.actions.get('addUncertainty').funct();
+	}));
+
+	mxEvent.addListener(this.updateUncertainty, 'click', mxUtils.bind(this, function()
+	{
+		this.actions.get('layers').funct();
+	}));
+
+	mxEvent.addListener(this.selectUncertainty, 'click', mxUtils.bind(this, function()
+	{
+		this.actions.get('layers').funct();
+	}));
+
+	mxEvent.addListener(this.deleteUncertainty, 'click', mxUtils.bind(this, function()
+	{
+		this.actions.get('layers').funct();
+	}));
+
+	this.analyseUncertainty.style.float = "left";
+	this.analyseUncertainty.style.width = "150px";
+	this.analyseUncertainty.style.backgroundColor = "lightyellow";
+	mxEvent.addListener(this.analyseUncertainty, 'click', mxUtils.bind(this, function()
+	{
+		//this.analyseUncertainty.innerHTML =  Math.floor(Math.random() * 10);
+		var cells = this.editor.graph.getSelectionCells();
+		if(cells.length > 0) {
+		
+		var value = this.editor.graph.getModel().getValue(cells[0]);
+		uncertaintyDB = JSON.parse(value.getAttribute("uncertaintyDB"));
+		dBkys = Object.keys(uncertaintyDB);
+
+		this.analyseUncertainty.innerHTML = "Count: " + dBkys.length;
+		}else {
+			this.analyseUncertainty.innerHTML = "Count uncertainties";
+		}
+		//this.actions.get('layers').funct();
+	}));
+
+
+
+	//this.menubar.container.appendChild(this.viewEditor);
+	//-chawa -- this.menubar.container.style.backgroundColor = "red";
+
 	if (this.menubar != null)
 	{
 		this.buttonContainer = document.createElement('div');
@@ -2043,6 +2149,8 @@ App.prototype.getThumbnail = function(width, fn)
 			graph.model.setRoot(page.root);
 		}
 		
+		//-chawa -- graph.container.style.backgroundColor = "black";
+
 		// Uses client-side canvas export
 		if (mxClient.IS_CHROMEAPP || this.useCanvasForExport)
 		{
@@ -5779,6 +5887,12 @@ App.prototype.updateHeader = function()
 		{
 			this.menubarContainer.appendChild(this.appIcon);
 		}
+
+		this.menubarContainer.appendChild(this.appIcon);
+		//--chawa --this.appIcon.style.backgroundColor = 'blue';
+		this.appIcon.style.float = "right";
+
+		//-chawa -- this.menubarContainer.style.backgroundColor = "black" the container we have the div;
 	
 		this.fnameWrapper = document.createElement('div');
 		this.fnameWrapper.style.position = 'absolute';
@@ -5823,6 +5937,8 @@ App.prototype.updateHeader = function()
 		}));
 		
 		this.fnameWrapper.appendChild(this.fname);
+
+		//-chawa -- this.fnameWrapper.style.backgroundColor = "brown";
 		
 		if (urlParams['embed'] != '1')
 		{
@@ -5834,6 +5950,8 @@ App.prototype.updateHeader = function()
 			this.menubar.container.style.boxSizing = 'border-box';
 			this.menubar.container.style.top = '34px';
 		}
+
+		//-chawa -- this.toolbar.container.style.backgroundColor = 'green';
 		
 		/**
 		 * Adds format panel toggle.
