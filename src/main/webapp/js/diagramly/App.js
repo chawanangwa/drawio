@@ -1545,6 +1545,7 @@ App.prototype.init = function()
 	this.visualUncertainty = this.showViews.cloneNode(false);
 	this.visualUncertainty.innerHTML = "Visualise";
 	this.analyseUncertainty.innerHTML = "Count uncertainties";
+	this.analyseUncertainty.id = "analyseUncertaintyButton";
 
 	//Uncertainty add, select, delete and update buttons
 	this.addUncertainty = this.showViews.cloneNode(false);
@@ -1610,6 +1611,7 @@ App.prototype.init = function()
 		
 		var value = this.editor.graph.getModel().getValue(cells[0]);
 		uncertaintyDB = JSON.parse(value.getAttribute("uncertaintyDB"));
+
 		dBkys = Object.keys(uncertaintyDB);
 
 		this.analyseUncertainty.innerHTML = "Count: " + dBkys.length;

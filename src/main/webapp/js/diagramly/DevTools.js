@@ -13,6 +13,8 @@ if (urlParams['dev'] == '1')
 			var geo = this.getCellGeometry(cell);
 			
 			tip += ((tip.length > 0) ? '<br>' : '') + 'id=' + cell.id + '<br>';
+			tip += ((tip.length > 0) ? '<br>' : '') + 'View=' + cell.parent.id + '<br>';
+			tip += ((tip.length > 0) ? '<br>' : '') + 'View=' + cell.parent.value + '<br>';
 			
 			if (geo != null)
 			{

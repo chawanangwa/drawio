@@ -5505,6 +5505,7 @@
 	/**
 	 * Constructs a new print dialog.
 	 */
+
 	PrintDialog.prototype.create = function(editorUi, titleText)
 	{
 		var graph = editorUi.editor.graph;

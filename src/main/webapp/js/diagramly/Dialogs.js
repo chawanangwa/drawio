@@ -10688,3 +10688,4 @@ var FilePropertiesDialog = function(editorUi)
 	
 	this.container = table;
 };
+
